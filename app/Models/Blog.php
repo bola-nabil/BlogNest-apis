@@ -16,14 +16,14 @@ class Blog extends Model
         "content",
         "image",
         "status",
+        "created_at",
+        "updated_at"
     ];
 
     protected $hidden = [
         "user_id",
         "slug",
         "status",
-        "created_at",
-        "updated_at"
     ];
 
     public function user() {

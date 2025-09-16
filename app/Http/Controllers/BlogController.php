@@ -10,7 +10,7 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::with(['user', 'categories', 'tags'])->paginate(10);
+        $blogs = Blog::with(['user', 'categories', 'tags', 'likes', 'comments'])->paginate(10);
 
         return response()->json([
             'success' => true,
