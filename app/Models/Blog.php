@@ -26,6 +26,11 @@ class Blog extends Model
         "status",
     ];
 
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+        'updated_at'=> 'date:Y-m-d'
+    ];
+
     public function user() {
         return $this->belongsTo(User::class);
     }
