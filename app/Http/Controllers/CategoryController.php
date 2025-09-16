@@ -5,20 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Traits\ApiResponse;
 
 class CategoryController extends Controller
 {
+    use ApiResponse;
     public function index()
     {
         $categories = Category::with('blogs')->get();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Successfully fetching all categories',
-            'categories' => $categories,
-        ]);
+        return $this->success("Successfully fetching all categories", "categories", $categories);
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -30,22 +27,22 @@ class CategoryController extends Controller
             'slug' => Str::slug($request->name),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category created successfully',
-            'category' => $category,
-        ], 201);
+        if ($request->has('blogs')) {
+            $category->blogs()->sync($request->blogs);
+        }
+
+        return $this->success("Successfully created category", "category", $category->load("blogs"), 201);
     }
 
     public function show($id)
     {
-        $category = Category::with('blogs')->findOrFail($id);
+        $category = Category::with('blogs')->find($id);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Successfully fetching data',
-            'category' => $category,
-        ]);
+        if(!$category) {
+            return $this->notFound("sorry not found category");
+        }
+
+        return $this->success("Success", "category", $category);
     }
 
     public function update(Request $request, $id)
@@ -54,27 +51,34 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name,' . $id,
         ]);
 
-        $category = Category::findOrFail($id);
+        $category = Category::find($id);
+
+        if(!$category) {
+            return $this->notFound("sorry not found category");
+        }
+
         $category->update([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category updated successfully',
-            'category' => $category,
-        ]);
+        if ($request->has('blogs')) {
+            $category->blogs()->sync($request->blogs);
+        }
+
+        return $this->success("Successfully updated category", "category", $category->load("blogs"));
     }
 
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::find($id);
+
+        if(!$category) {
+            return $this->notFound("sorry not found category");
+        }
+
         $category->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Category deleted successfully',
-        ]);
+        return $this->removeData("Category deleted successfully");
     }
 }
