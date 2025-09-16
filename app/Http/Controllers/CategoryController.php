@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\HTtp\Requests\Categories\StoreCategoryRequest;
+use App\Http\Requests\Categories\StoreCategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Traits\ApiResponse;

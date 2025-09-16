@@ -16,7 +16,8 @@ class Blog extends Model
         "content",
         "image",
         "status",
-        "tags"
+        "tags",
+        "categories"
     ];
 
     protected $hidden = [
