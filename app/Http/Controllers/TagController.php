@@ -11,9 +11,10 @@ use App\Traits\ApiResponse;
 class TagController extends Controller
 {
     use ApiResponse;
+
     public function index()
     {
-        return $this->success("Successfully fetching all tags", "tags", Tag::all());
+        return $this->success("Successfully fetching all tags", "tags", Tag::with("blogs")->get());
     }
 
     public function store(StoreTagRequest $request)
@@ -23,7 +24,12 @@ class TagController extends Controller
             "slug" => Str::slug($request->name)
         ]);
 
-        return $this->success("Successfully created tag", "tag", $tag, 201);
+        // Attach blogs if provided
+        if ($request->has('blogs')) {
+            $tag->blogs()->sync($request->blogs);
+        }
+
+        return $this->success("Successfully created tag", "tag", $tag->load("blogs"), 201);
     }
 
     public function show($id)
@@ -31,7 +37,7 @@ class TagController extends Controller
         $tag = Tag::with("blogs")->find($id);
 
         if(!$tag) {
-            return $this->notFound("orry not found tag");
+            return $this->notFound("sorry not found tag");
         }
 
         return $this->success("Success", "tag", $tag);
@@ -54,7 +60,12 @@ class TagController extends Controller
             "slug" => Str::slug($request->name)
         ]);
 
-        return $this->success("Successfully update tag", "tag", $tag);
+        // Update attached blogs if provided
+        if ($request->has('blogs')) {
+            $tag->blogs()->sync($request->blogs);
+        }
+
+        return $this->success("Successfully updated tag", "tag", $tag->load("blogs"));
     }
 
     public function destroy($id)

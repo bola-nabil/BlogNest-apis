@@ -58,7 +58,7 @@ class BlogController extends Controller
 
         $blogs = $query->paginate(10);
 
-        return $this->success("Blogs fetching successfully","blogs",$blogs, );
+        return $this->success("Blogs fetching successfully","blogs",$blogs);
     }
 
     public function store(StoreBlogRequest $request)
@@ -91,7 +91,10 @@ class BlogController extends Controller
     {
         $blog = Blog::with(["user", "categories", "tags"])->find($id);
 
-        return $this->notFound($blog);
+        if(!$blog) {
+            return $this->notFound("sorry blog not found");
+        }
+
         return $this->success("Successfully fetching data","blog", $blog);
     }
 
@@ -130,7 +133,7 @@ class BlogController extends Controller
             $blog->tags()->sync($request->tags);
         }
 
-        return $this->success("Blog Updated Successfuly","blog", $blog->load(["user", "categories", "tags"]),);
+        return $this->success("Blog Updated Successfuly","blog", $blog->load(["user", "categories", "tags"]));
     }
 
     public function destroy($id)
