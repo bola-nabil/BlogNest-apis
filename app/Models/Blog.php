@@ -16,8 +16,6 @@ class Blog extends Model
         "content",
         "image",
         "status",
-        "created_at",
-        "updated_at"
     ];
 
     protected $hidden = [
