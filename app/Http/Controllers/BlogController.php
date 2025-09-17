@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Blogs\StoreBlogRequest;
 use App\Models\Blog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
 
 class BlogController extends Controller
 {
@@ -26,6 +28,7 @@ class BlogController extends Controller
          $blog = Blog::create([
             ...$request->validated(),
             'user_id' => auth()->id(),
+            'slug' => Str::slug($request->title), 
         ]);
 
         if ($request->has('categories')) {
