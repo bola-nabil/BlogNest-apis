@@ -2,7 +2,6 @@
 
 namespace App\Traits;
 
-
 trait UploadFiles {
     public function uploadImage($file, $folder)
     {
@@ -21,7 +20,6 @@ trait UploadFiles {
     public function deleteImage($fileUrl)
     {
         $relativePath = parse_url($fileUrl, PHP_URL_PATH);
-        
         $fullPath = public_path($relativePath);
 
         if (file_exists($fullPath)) {

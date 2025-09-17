@@ -6,10 +6,11 @@ use App\Http\Requests\Blogs\StoreBlogRequest;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
+use App\Traits\UploadFiles;
 
 class BlogController extends Controller
 {
+    use UploadFiles;
     public function index()
     {
         $blogs = Blog::with(['user', 'categories', 'tags'])
@@ -25,11 +26,15 @@ class BlogController extends Controller
 
     public function store(StoreBlogRequest $request)
     {
-         $blog = Blog::create([
-            ...$request->validated(),
-            'user_id' => auth()->id(),
-            'slug' => Str::slug($request->title), 
-        ]);
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+        $data['slug'] = Str::slug($request->title);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $this->uploadImage($request->file('image'), "uploads/blogs");
+        }
+
+         $blog = Blog::create($data);
 
         if ($request->has('categories')) {
             $blog->categories()->sync($request->categories);
@@ -59,7 +64,17 @@ class BlogController extends Controller
     public function update(StoreBlogRequest $request, $id)
     {
         $blog = Blog::findOrFail($id);
-        $blog->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            // delete old image
+            if ($blog->image) {
+                $this->deleteImage($blog->image);
+            }
+            $data['image'] = $this->uploadImage($request->file('image'), 'uploads/blogs');
+        }
+
+        $blog->update($data);
 
         if ($request->has('categories')) {
             $blog->categories()->sync($request->categories);
@@ -78,6 +93,11 @@ class BlogController extends Controller
     public function destroy($id)
     {
         $blog = Blog::findOrFail($id);
+
+        if ($blog->image) {
+            $this->deleteImage($blog->image);
+        }
+        
         $blog->delete();
 
         return response()->json([
