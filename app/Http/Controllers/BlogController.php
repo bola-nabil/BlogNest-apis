@@ -23,7 +23,10 @@ class BlogController extends Controller
 
     public function store(StoreBlogRequest $request)
     {
-        $blog = Blog::create($request->validated());
+         $blog = Blog::create([
+            ...$request->validated(),
+            'user_id' => auth()->id(),
+        ]);
 
         if ($request->has('categories')) {
             $blog->categories()->sync($request->categories);
