@@ -22,6 +22,8 @@ class Blog extends Model
         "user_id",
         "slug",
         "status",
+        "created_at",
+        "updated_at"
     ];
 
     protected $casts = [
