@@ -52,7 +52,9 @@ class BlogController extends Controller
 
     public function show($id)
     {
-        $blog = Blog::with(['user', 'categories', 'tags'])->findOrFail($id);
+        $blog = Blog::with(['user', 'categories', 'tags'])
+        ->withCount(['likes', 'comments'])
+        ->findOrFail($id);
 
         return response()->json([
             'success' => true,
