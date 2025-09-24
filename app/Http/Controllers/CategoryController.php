@@ -36,9 +36,7 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        $category = Category::with('blogs')
-        ->find($id)
-        ->paginate(10);
+        $category = Category::with('blogs')->find($id);
 
         if(!$category) {
             return $this->notFound("sorry not found category");
