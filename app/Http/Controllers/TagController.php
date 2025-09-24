@@ -34,7 +34,9 @@ class TagController extends Controller
 
     public function show($id)
     {
-        $tag = Tag::with("blogs")->find($id);
+        $tag = Tag::with("blogs")
+        ->find($id)
+        ->paginate(10);
 
         if(!$tag) {
             return $this->notFound("sorry not found tag");

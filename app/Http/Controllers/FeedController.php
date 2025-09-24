@@ -15,7 +15,8 @@ class FeedController extends Controller
 
         $followingIds = $user->followings()->pluck("users.id");
 
-        $blogs = Blog::with(['user', 'categories', 'tags', 'likes', 'comments'])
+        $blogs = Blog::with(['user', 'categories', 'tags'])
+                    ->withCount(['likes', 'comments'])
                     ->whereIn('user_id', $followingIds)
                     ->orderBy('created_at', 'desc')
                     ->paginate(10);

@@ -54,7 +54,7 @@ class BlogController extends Controller
     {
         $blog = Blog::with(['user', 'categories', 'tags'])
         ->withCount(['likes', 'comments'])
-        ->findOrFail($id);
+        ->findOrFail(id: $id);
 
         return response()->json([
             'success' => true,
