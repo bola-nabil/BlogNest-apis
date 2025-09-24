@@ -34,7 +34,7 @@ class TagController extends Controller
 
     public function show($id)
     {
-        $tag = Tag::with("blogs")
+        $tag = Tag::with(["blogs", 'user'])
         ->find($id)
         ->paginate(10);
 
