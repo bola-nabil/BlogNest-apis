@@ -36,7 +36,7 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        $category = Category::with(['blogs', 'user'])
+        $category = Category::with('blogs')
         ->find($id)
         ->paginate(10);
 
