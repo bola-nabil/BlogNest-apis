@@ -67,9 +67,9 @@ Route::middleware("auth:api")->prefix('v1')->group(function() {
 
 
     // user profile
-    Route::get("/profile", [UserProfileController::class, "index"]);
     Route::get("/users/{id}/profile", [UserProfileController::class, "show"]);
     Route::post("/profile/update", [ProfileController::class, 'update']);
+    Route::get("/profile", [ProfileController::class, "index"]);
     Route::get("/profile/{id}", [ProfileController::class, 'show']);
 
     // bookmarks
