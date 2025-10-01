@@ -11,7 +11,9 @@ class UserProfileController extends Controller
     use ApiResponse;
     public function show($id)
     {
-        $user = User::withCount(['followers', 'followings'])->find($id);
+        $user = User::withCount(['followers', 'followings'])
+                    ->with(['blogs', 'bookmarks'])
+                    ->find($id);
 
         if (!$user) {
             return $this->notFound("sorry not found user");
@@ -31,8 +33,10 @@ class UserProfileController extends Controller
             "profile_image" => $user->profile_image,
             "followers_count" => $user->followers_count,
             "followings_count" => $user->followings_count,
-            "is_following" => $isFollowing, // 🔥 Add this field
-        ]);
+            "is_following" => $isFollowing,
+            "blogs" => $user->blogs,          
+            "bookmarks" => $user->bookmarks,
+            ]);
     }
 
 }
