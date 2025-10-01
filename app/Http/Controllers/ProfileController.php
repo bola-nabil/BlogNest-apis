@@ -33,10 +33,25 @@ class ProfileController extends Controller
     {
         $user = User::withCount(['followers', 'followings'])->find($id);
 
-        if(!$user) {
+        if (!$user) {
             return $this->notFound("sorry not found user");
         }
-        
-        return $this->success("Success", "user", $user);
+
+        // Check if logged-in user follows this profile
+        $isFollowing = auth()->check() 
+            ? $user->followers()->where('follower_id', auth()->id())->exists()
+            : false;
+
+        return $this->success("Success", "user", [
+            "id" => $user->id,
+            "name" => $user->name,
+            "bio" => $user->bio,
+            "location" => $user->location,
+            "website" => $user->website,
+            "profile_image" => $user->profile_image,
+            "followers_count" => $user->followers_count,
+            "followings_count" => $user->followings_count,
+            "is_following" => $isFollowing,
+        ]);
     }
 }
