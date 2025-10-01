@@ -11,24 +11,28 @@ class UserProfileController extends Controller
     use ApiResponse;
     public function show($id)
     {
-    $user = User::with([
-        'blogs.categories',
-        'blogs.tags',
-        'comments.blog',
-        'likes.blog'
-    ])->findOrFail($id);
+        $user = User::withCount(['followers', 'followings'])->find($id);
 
-    $authUser = auth()->user();
+        if (!$user) {
+            return $this->notFound("sorry not found user");
+        }
 
-    // check if logged-in user already follows this profile
-    $isFollowing = false;
-    if ($authUser && $authUser->id !== $user->id) {
-        $isFollowing = $authUser->followings()->where('followed_id', $user->id)->exists();
+        // Check if logged-in user follows this profile
+        $isFollowing = auth()->check() 
+            ? $user->followers()->where('follower_id', auth()->id())->exists()
+            : false;
+
+        return $this->success("Success", "user", [
+            "id" => $user->id,
+            "name" => $user->name,
+            "bio" => $user->bio,
+            "location" => $user->location,
+            "website" => $user->website,
+            "profile_image" => $user->profile_image,
+            "followers_count" => $user->followers_count,
+            "followings_count" => $user->followings_count,
+            "is_following" => $isFollowing, // 🔥 Add this field
+        ]);
     }
 
-    // add is_following flag
-    $user->is_following = $isFollowing;
-
-    return $this->success("Successfully fetching user profile", "user", $user);
-}
 }
