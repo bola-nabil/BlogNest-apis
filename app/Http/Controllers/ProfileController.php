@@ -11,6 +11,12 @@ class ProfileController extends Controller
 {
     use UploadFiles, ApiResponse;
 
+    public function index()
+    {
+        $user = auth()->user();
+
+        return $this->success("Successfully fetching user", "user", $user);
+    }
     public function update(UpdateUserRequest $request)
     {
         $user = auth()->user();
