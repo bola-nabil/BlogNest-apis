@@ -11,12 +11,13 @@ class ProfileController extends Controller
 {
     use UploadFiles, ApiResponse;
 
-    public function index()
-    {
-        $user = auth()->user();
+        public function index()
+        {
+            $user = auth()->user();
 
-        return $this->success("Successfully fetching user", "user", $user);
-    }
+            return $this->success("Successfully fetching user", "user", $user);
+        }
+
     public function update(UpdateUserRequest $request)
     {
         $user = auth()->user();
@@ -39,25 +40,10 @@ class ProfileController extends Controller
     {
         $user = User::withCount(['followers', 'followings'])->find($id);
 
-        if (!$user) {
+        if(!$user) {
             return $this->notFound("sorry not found user");
         }
-
-        // Check if logged-in user follows this profile
-        $isFollowing = auth()->check() 
-            ? $user->followers()->where('follower_id', auth()->id())->exists()
-            : false;
-
-        return $this->success("Success", "user", [
-            "id" => $user->id,
-            "name" => $user->name,
-            "bio" => $user->bio,
-            "location" => $user->location,
-            "website" => $user->website,
-            "profile_image" => $user->profile_image,
-            "followers_count" => $user->followers_count,
-            "followings_count" => $user->followings_count,
-            "is_following" => $isFollowing,
-        ]);
+        
+        return $this->success("Success", "user", $user);
     }
 }
