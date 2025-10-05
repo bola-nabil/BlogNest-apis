@@ -20,7 +20,7 @@ class SearchController extends Controller
         $blogs = Blog::where('title', 'like', "%{$query}%")
             ->orWhere('content', 'like', "%{$query}%")
             ->take(10)
-            ->get(['id', 'title', 'created_at']);
+            ->get(['id', 'title', 'created_at', 'content']);
 
         $categories = Category::where('name', 'like', "%{$query}%")
             ->take(10)
