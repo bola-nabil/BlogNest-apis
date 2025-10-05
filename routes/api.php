@@ -15,7 +15,7 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\ExploreController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +39,9 @@ Route::middleware("auth:api")->prefix('v1')->group(function() {
     Route::get("/blogs/{id}", [BlogController::class, "show"]);
     Route::put("/blogs/{id}", [BlogController::class, "update"]);
     Route::delete("/blogs/{id}", [BlogController::class, "destroy"]);
+
+    // search
+    Route::get('/search', [SearchController::class, 'search']);
 
     // comments
     Route::get("blogs/{blogId}/comments", [CommentController::class, "index"]);
