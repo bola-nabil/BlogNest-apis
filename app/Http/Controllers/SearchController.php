@@ -17,12 +17,11 @@ class SearchController extends Controller
             return response()->json(['error' => 'Query is required'], 400);
         }
 
-        $blogs = Blog::where('title', 'like', "%{$query}%")
+        $blogs = Blog::with(['user:id,name,profile_image']) // 👈 load related user
+            ->where('title', 'like', "%{$query}%")
             ->orWhere('content', 'like', "%{$query}%")
             ->take(10)
-            ->get(['id', 'title', 'created_at', 'content']);
-
-        $categories = Category::where('name', 'like', "%{$query}%")
+            ->get(['id', 'title', 'created_at', 'content', 'user_id']);        $categories = Category::where('name', 'like', "%{$query}%")
             ->take(10)
             ->get(['id', 'name']);
 
