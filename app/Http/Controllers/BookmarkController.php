@@ -29,7 +29,6 @@ class BookmarkController extends Controller
 
         $bookmarks = $user->bookmarks()->with('user', 'categories', 'tags')->paginate(10);
 
-        return response()->json(['bookmarks' => $bookmarks]);
         return $this->success("Success",  "bookmarks", $bookmarks);
     }
 }
