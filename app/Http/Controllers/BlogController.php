@@ -64,34 +64,37 @@ class BlogController extends Controller
         ]);
     }
 
-    public function update(UpdateBlogRequest $request, $id)
-    {
-        $blog = Blog::findOrFail($id);
-        $data = $request->validated();
+public function update(UpdateBlogRequest $request, $id)
+{
+    $blog = Blog::findOrFail($id);
+    $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            // delete old image
-            if ($blog->image) {
-                $this->deleteImage($blog->image);
-            }
-            $data['image'] = $this->uploadImage($request->file('image'), 'uploads/blogs');
+    if ($request->hasFile('image')) {
+        if ($blog->image) {
+            $this->deleteImage($blog->image);
         }
-
-        $blog->update($data);
-
-        if ($request->has('categories')) {
-            $blog->categories()->sync($request->categories);
-        }
-        if ($request->has('tags')) {
-            $blog->tags()->sync($request->tags);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Blog updated successfully',
-            'blog' => $blog->load(['categories', 'tags']),
-        ]);
+        $data['image'] = $this->uploadImage($request->file('image'), 'uploads/blogs');
     }
+
+    if (!empty($request->title)) {
+        $data['slug'] = \Illuminate\Support\Str::slug($request->title);
+    }
+
+    $blog->update($data);
+
+    if ($request->filled('categories')) {
+        $blog->categories()->sync($request->categories);
+    }
+    if ($request->filled('tags')) {
+        $blog->tags()->sync($request->tags);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Blog updated successfully',
+        'blog' => $blog->load(['categories', 'tags']),
+    ]);
+}
 
     public function destroy($id)
     {
