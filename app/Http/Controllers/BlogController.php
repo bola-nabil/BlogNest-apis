@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Blogs\StoreBlogRequest;
+use App\Http\Requests\Blogs\UpdateBlogRequest;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -63,7 +64,7 @@ class BlogController extends Controller
         ]);
     }
 
-    public function update(StoreBlogRequest $request, $id)
+    public function update(UpdateBlogRequest $request, $id)
     {
         $blog = Blog::findOrFail($id);
         $data = $request->validated();
