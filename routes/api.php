@@ -33,6 +33,8 @@ Route::post("/login", [AuthController::class, "login"]);
 
 Route::middleware("auth:api")->prefix('v1')->group(function() {
     Route::post("/logout", [AuthController::class, "logout"]);
+    Route::post("/change-password", [AuthController::class, "changePassword"]);
+    
     //blogs
     Route::get("/blogs", [BlogController::class, "index"]);
     Route::post("/blogs", [BlogController::class, "store"]);
