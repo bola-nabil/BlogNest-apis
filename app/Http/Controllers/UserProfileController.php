@@ -9,6 +9,28 @@ use App\Traits\ApiResponse;
 class UserProfileController extends Controller
 {
     use ApiResponse;
+
+    public function index()
+    {
+        $users = User::withCount(['followers', 'followings'])
+                    ->with('blogs')
+                    ->get()
+                    ->map(function ($user) {
+                        return [
+                            "id" => $user->id,
+                            "name" => $user->name,
+                            "bio" => $user->bio,
+                            "location" => $user->location,
+                            "website" => $user->website,
+                            "profile_image" => $user->profile_image,
+                            "followers_count" => $user->followers_count,
+                            "followings_count" => $user->followings_count,
+                        ];
+                    });
+
+        return $this->success("Success", "users", $users);
+    }
+
     public function show($id)
     {
         $user = User::withCount(['followers', 'followings'])
