@@ -10,23 +10,29 @@ class UserProfileController extends Controller
 {
     use ApiResponse;
 
-    public function index()
-    {
-        $users = User::withCount(['followers', 'followings'])
-                    ->with('blogs')
-                    ->get()
-                    ->map(function ($user) {
-                        return [
-                            "id" => $user->id,
-                            "name" => $user->name,
-                            "bio" => $user->bio,
-                            "location" => $user->location,
-                            "website" => $user->website,
-                            "profile_image" => $user->profile_image,
-                            "followers_count" => $user->followers_count,
-                            "followings_count" => $user->followings_count,
-                        ];
-                    });
+public function index()
+{
+    $authUser = auth()->user();
+
+    $users = User::withCount(['followers', 'followings'])
+        ->with('blogs')
+        ->where('id', '!=', $authUser->id) // optional: exclude the current user
+        ->get()
+        ->map(function ($user) use ($authUser) {
+            return [
+                "id" => $user->id,
+                "name" => $user->name,
+                "bio" => $user->bio,
+                "location" => $user->location,
+                "website" => $user->website,
+                "profile_image" => $user->profile_image,
+                "followers_count" => $user->followers_count,
+                "followings_count" => $user->followings_count,
+                "is_following" => $user->followers()
+                    ->where('follower_id', $authUser->id)
+                    ->exists(),
+            ];
+        });
 
         return $this->success("Success", "users", $users);
     }
