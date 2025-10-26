@@ -25,7 +25,11 @@ class LikeController extends Controller
 
         if ($existingLike) {
             $existingLike->delete();
-            return $this->success("Success", "message", "You unliked the blog: {$blog->title}");
+            return $this->success("Success", "data", [
+                'liked' => false,
+                'likes_count' => $blog->likes()->count(),
+                'message' => "You unliked the blog: {$blog->title}"
+            ]);
         }
 
         Like::create([
@@ -37,7 +41,11 @@ class LikeController extends Controller
             $blog->user->notify(new BlogLikedNotification($blog, $user));
         }
 
-        return $this->success("Success", "message", "You liked the blog: {$blog->title}");
+        return $this->success("Success", "data", [
+            'liked' => true,
+            'likes_count' => $blog->likes()->count(),
+            'message' => "You liked the blog: {$blog->title}"
+        ]);
     }
 
     /**
