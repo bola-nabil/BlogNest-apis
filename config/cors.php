@@ -20,6 +20,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
+        'https://blognest-three.vercel.app',
         'https://blognest-qusu.vercel.app',
         'https://blognest-94tp.vercel.app',
         'https://blognest-94tp-expxzlca2-bola-nabils-projects.vercel.app',
